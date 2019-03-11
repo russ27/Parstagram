@@ -24,7 +24,9 @@ class LoginViewController: UIViewController {
     //loginSegue is identifier for loginView to FeedView
     
     //cannot segue directly from buttons!
+    
     @IBAction func onSignInButton(_ sender: Any) {
+        
         let username = userNameField.text!
         let password = passwordField.text!
         

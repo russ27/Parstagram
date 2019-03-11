@@ -35,6 +35,9 @@ class CameraViewController: UIViewController,UIImagePickerControllerDelegate, UI
     }
     */
 
+    @IBAction func onFeedBarButton(_ sender: Any) {
+        
+    }
     
     @IBAction func onSubmitButton(_ sender: Any) {
         //all object of all type is PFObject

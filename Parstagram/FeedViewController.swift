@@ -16,35 +16,110 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
     @IBOutlet weak var tableView: UITableView!
     
     var posts = [PFObject]()
+    let refreshControl = UIRefreshControl() //refreshcontrol
+    
+    //will explore this
+    @IBAction func onLogoutButton(_ sender: Any) {
+        
+        PFUser.logOut()
+        self.dismiss(animated: true, completion: nil)
+    }
+    
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        loadFeed()
         
         tableView.delegate = self
         tableView.dataSource = self
         
-
+        refreshControl.addTarget(self, action: #selector(loadFeed), for: .valueChanged)
+        tableView.refreshControl = refreshControl
         // Do any additional setup after loading the view.
     }
+    
     
     //tableview refreshed
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        self.loadFeed()
+        
+        /*
+         //query                        //for us its "Posts"
+         let query = PFQuery(className:"Posts")
+         query.includeKey("author")
+         query.limit = 20 //ex: last 20
+         
+         //array of objects
+         query.findObjectsInBackground { (posts, error) in
+         if posts != nil {
+         self.posts = posts! //put data in array/ store data
+         self.tableView.reloadData() //tell tableview to reload itself so it calls function again
+         }
+         }
+         */
+    }
+    
+    
+    var numberOfFeed: Int!
+    
+    @objc func loadFeed(){
+        
+        numberOfFeed = 3
         
         //query                        //for us its "Posts"
         let query = PFQuery(className:"Posts")
         query.includeKey("author")
-        query.limit = 20 //ex: last 20
+        query.limit = numberOfFeed //ex: last 20
         
         //array of objects
         query.findObjectsInBackground { (posts, error) in
             if posts != nil {
                 self.posts = posts! //put data in array/ store data
                 self.tableView.reloadData() //tell tableview to reload itself so it calls function again
+                
+                self.refreshControl.endRefreshing() //ends refresh(infinte spinning "load wheel")usually after reloadData() func
+            }
+        }
+    }
+    
+    func loadMoreFeed(){
+        
+        let query = PFQuery(className:"Posts")
+    
+        numberOfFeed = numberOfFeed + 5
+        
+        query.includeKey("author")
+        query.limit = numberOfFeed
+        
+      
+        
+        //array of objects
+        query.findObjectsInBackground { (posts, error) in
+            if posts != nil {
+                self.posts = posts! //put data in array/ store data
+                self.tableView.reloadData() //tell tableview to reload itself so it calls function again
+                
             }
         }
         
+        print("Loading more feed!")
+        print(posts.count)
+        
     }
+    
+    /*
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath){
+        
+        if indexPath.row + 1 == posts.count {
+            loadMoreFeed()
+            print(indexPath.row)
+        }
+    }
+    */
+    
     
     //functions required for dataSource
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -74,9 +149,11 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
         return cell
     }
     
+    
 
     /*
     // MARK: - Navigation
+     
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
