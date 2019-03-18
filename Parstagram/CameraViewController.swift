@@ -58,7 +58,8 @@ class CameraViewController: UIViewController,UIImagePickerControllerDelegate, UI
         
         post.saveInBackground { (success, error) in
             if  success {
-            self.dismiss(animated: true, completion: nil)
+                //do not segue(show). instead, segue modally!
+                self.dismiss(animated: true, completion: nil)  //*this line segueways back to login
                 print("Saved!")
             }
             else {
@@ -91,7 +92,7 @@ class CameraViewController: UIViewController,UIImagePickerControllerDelegate, UI
         let image = info[.editedImage] as! UIImage
         
         let size = CGSize(width: 300, height: 300)
-        let scaledImage = image.af_imageScaled(to: size)
+        let scaledImage = image.af_imageAspectScaled(toFill: size)
         
         imageView.image = scaledImage
         

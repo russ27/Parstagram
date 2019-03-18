@@ -9,6 +9,7 @@
 import UIKit
 import Parse
 
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
@@ -25,6 +26,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 configuration.server = "https://cryptic-tundra-29262.herokuapp.com/Parse"
             })
         )
+        
+        //user stays logged in
+        if (PFUser.current() != nil) {
+            let main = UIStoryboard(name: "Main", bundle: nil)
+            
+            let feedNavigationController = main.instantiateViewController(withIdentifier: "feedNavigationController")
+            
+            window?.rootViewController = feedNavigationController
+        }
         
         return true
     }
